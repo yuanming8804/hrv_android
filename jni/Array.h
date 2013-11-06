@@ -1,10 +1,12 @@
 #ifndef _CntrArray__h
 #define _CntrArray__h
 
-#include <PreInclude.h>
 #include <vector>
+#include <PreInclude.h>
+
 // Array.h : header file
 //
+//using namespace std;
 
 template<class TYPE, class ARG_TYPE>
 class CContrObArray
@@ -40,5 +42,6 @@ public:
 	int Append( const CContrObArray& src );
 };
 
+//#include "Array.cpp"
 /////////////////////////////////////////////////////////////////////////////
 #endif

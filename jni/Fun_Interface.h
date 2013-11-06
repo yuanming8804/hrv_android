@@ -3,6 +3,7 @@
 #include "DrvM801Usb.h"
 #include "Summ.h"
 #include "Trgcalc.h"
+#include "Timer.h"
 
 //#include <sys/time.h>
 //#include <linux/rtc.h>

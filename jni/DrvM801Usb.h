@@ -98,8 +98,8 @@ private:
 	HANDLE   m_hSensor;													// 传感器
 
 	pthread_t m_hThread;
-	pthread_cond_t m_hCond = PTHREAD_COND_INITIALIZER;			// 线程退出条件
-	pthread_mutex_t m_hLock = PTHREAD_MUTEX_INITIALIZER;
+	pthread_cond_t m_hCond;// = PTHREAD_COND_INITIALIZER;			// 线程退出条件
+	pthread_mutex_t m_hLock;// = PTHREAD_MUTEX_INITIALIZER;
 
 	int      mAgcOn;                 // AGC on (1) or off (0)
 	int      mAgcPowerLevel;         // Current power: Low(0), Med(1), Hi(2)

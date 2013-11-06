@@ -1,6 +1,8 @@
 //#include "stdafx.h"
 #include "ffDefs.h"
+//#include <vector>
 #include "Array.h"
+
 
 
 //#ifdef _DEBUG
@@ -131,9 +133,11 @@ void CContrObArray<TYPE, ARG_TYPE>::Add(ARG_TYPE  Obj)
 }
 
 
+//CContrObArray<int, int>::CContrObArray ()
+template<class TYPE, class ARG_TYPE>
 CContrObArray<int, int>::CContrObArray ()
 {
-		Name = "int ";
+	Name = "int ";
 }
 
 
@@ -162,15 +166,15 @@ void CContrObArray<DWORD, DWORD>::SetSize(int Sz, int Incr)
 	Array.resize(Sz);
 }
 
-int CContrObArray<DWORD,DWORD>::GetSize()
+int CContrObArray<DWORD, DWORD>::GetSize()
 {
 	return Array.size();
 }
 
 
-void CContrObArray<DWORD,DWORD>::Set(int Ind,DWORD Obj)
+void CContrObArray<DWORD, DWORD>::Set(int Ind,DWORD Obj)
 {
-	if (Ind<Array.size() && Ind>=0)
+	if (Ind < Array.size() && Ind>=0)
 	{
 		Array[Ind]=Obj;
 	}

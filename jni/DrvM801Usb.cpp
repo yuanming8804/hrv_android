@@ -84,6 +84,9 @@ static float fIbiMultiplier = defIbiMultiplier;
 
 CDrvM801::CDrvM801()
 {
+	m_hCond = PTHREAD_COND_INITIALIZER;			// 线程退出条件
+	m_hLock = PTHREAD_MUTEX_INITIALIZER;
+
 	m_fIsOpened = false;
 	//m_hSensor = INVALID_HANDLE_VALUE;
 

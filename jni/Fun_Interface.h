@@ -1,3 +1,6 @@
+#ifndef __Fun_Interface_h__
+#define __Fun_Interface_h__
+
 #include "Drv.h"
 #include "array.h"
 #include "DrvM801Usb.h"
@@ -46,8 +49,8 @@ private:
 	//HANDLE hTimerQueue;
 	//pthread_t m_hTimerThread;
 
-	CTimer hTimerPPG;
-	CTimer hTimerSYS;
+	CTimer *hTimerPPG;
+	CTimer *hTimerSYS;
 
 	int nSamplesRead;
 	/////////////////////
@@ -206,4 +209,5 @@ public:
 };
 //VOID TimerAction(PVOID lpParam, BOOLEAN TimerOrWaitFired);
 void *TimerAction(void *arg);
-//#endif
+
+#endif

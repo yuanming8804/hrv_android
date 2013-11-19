@@ -27,9 +27,7 @@
 								</outputEntries>
 							</builder>
 							<tool id="com.android.gcc.compiler.507775640" name="Android GCC Compiler" superClass="com.android.gcc.compiler">
-								<option id="com.android.gcc.option.includePath.2112174292" superClass="com.android.gcc.option.includePath" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;D:\AndroidEclipse\android-ndk-r9\sources\cxx-stl\stlport\stlport&quot;"/>
-								</option>
+								<option id="com.android.gcc.option.includePath.2112174292" superClass="com.android.gcc.option.includePath" valueType="includePath"/>
 								<inputType id="com.android.gcc.inputType.1970461763" superClass="com.android.gcc.inputType"/>
 							</tool>
 						</toolChain>
@@ -54,4 +52,5 @@
 	<storageModule moduleId="refreshScope" versionNumber="1">
 		<resource resourceType="PROJECT" workspacePath="/HDReadTest"/>
 	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 </cproject>

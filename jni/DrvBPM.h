@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _DrvBPM__h
+#define _DrvBPM__h
 
 // DrvBPM.h : header file
 //
@@ -103,3 +104,4 @@ struct ChannelInfo
 **  fle::above not used
 */
 
+#endif

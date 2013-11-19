@@ -7,7 +7,8 @@
 // To implement USB Driver interface for FF software
 // Last Date of Modification : Oct 20 2001
 //////////////////////////////////////////////////////////////////////
-#pragma once
+#ifndef __DrvM801Usb_h__
+#define __DrvM801Usb_h__
 
 #include "Drv.h"
 
@@ -150,4 +151,5 @@ private:
 	void agcFinalize( );
 };
 
+#endif
 

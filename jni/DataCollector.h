@@ -9,10 +9,7 @@
 ** 2002/05/04:fle:Original
 **
 */
-
-
-#if !defined ( __DataCollector_h__ )
-
+#ifndef __DataCollector_h__
 #define __DataCollector_h__
 
 

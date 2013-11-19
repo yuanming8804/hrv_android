@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __Trgcalc_h__
+#define __Trgcalc_h__
 
 // TRGCalc.h : header file
 //
@@ -44,3 +45,5 @@ public:
 	virtual ~CTRGCalc();
 
 };
+
+#endif

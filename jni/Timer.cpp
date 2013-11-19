@@ -13,6 +13,10 @@
 
 //void (*FunP)(int );
 
+void timer_thread_exit_handler(int sig)
+{
+	pthread_exit(0);
+}
 
 //////////////////////////public methods//////////////////////////
 CTimer::CTimer():
@@ -79,7 +83,7 @@ void CTimer::thread_proc()
 		memset(&actions, 0, sizeof(actions));
 		sigemptyset(&actions.sa_mask);
 		actions.sa_flags = 0;
-		actions.sa_handler = thread_exit_handler;
+		actions.sa_handler = timer_thread_exit_handler;
 		int rc = sigaction(SIGUSR1, &actions, NULL);
 
         //OnTimer();
@@ -96,9 +100,4 @@ void *CTimer::OnTimer()
 {
     //cout << "Timer once..." << endl;
 	return (void *)0;
-}
-
-void CTimer::thread_exit_handler()
-{
-	pthread_exit(0);
 }

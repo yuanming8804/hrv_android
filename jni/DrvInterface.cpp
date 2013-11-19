@@ -150,8 +150,8 @@ void Fun_interface::ExInitialize()
 //		//printf("DeleteTimerQueue failed (%d)\n", GetLastError());
 //	}
 
-	hTimerPPG.StopTimer();
-	hTimerSYS.StopTimer();
+	hTimerPPG->StopTimer();
+	hTimerSYS->StopTimer();
 	delete hTimerPPG;
 	delete hTimerSYS;
 	//	CloseHandle(hTimerQueue);
@@ -1250,8 +1250,8 @@ BOOL Fun_interface::ReadData()
 	//CTimer sysTimer(TimerAction, 1, 0, 500, &arg_sys);
 	hTimerPPG = new CTimer(TimerAction, 1, 0, 100, &arg_ppg);
 	hTimerSYS = new CTimer(TimerAction, 1, 0, 500, &arg_sys);
-	hTimerPPG.StartTimer();
-	hTimerSYS.StartTimer();
+	hTimerPPG->StartTimer();
+	hTimerSYS->StartTimer();
 
 //	struct timeval tempval;
 //	tempval.tv_sec = 0;

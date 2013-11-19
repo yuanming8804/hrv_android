@@ -1,8 +1,8 @@
 // Summ.h: interface for the CSumm class.
 //
 //////////////////////////////////////////////////////////////////////
-
-#pragma once
+#ifndef __Summ_h__
+#define __Summ_h__
 
 typedef enum
 {
@@ -28,4 +28,5 @@ public:
 
 };
 
+#endif
 

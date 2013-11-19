@@ -1,8 +1,5 @@
-
-#if !defined ( __uBeLeInts_h__ )
-
+#ifndef __uBeLeInts_h__
 #define __uBeLeInts_h__
-
 
 /**
 ** uBeLeInts (Union of Big Endian Little Endian Ints)

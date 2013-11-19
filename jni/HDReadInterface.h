@@ -1,9 +1,10 @@
-#pragma once
+//#pragma once
+
+#ifndef DEFAULT_CHREAD
+#define DEFAULT_CHREAD
 //这个类用于管理设备对外的接口
 #include "DrvInterface.h"
 #include "Fun_Interface.h"
-//#ifndef DEFAULT_CHREAD
-//#define DEFAULT_CHREAD
 
 class CHDRead
 {
@@ -88,4 +89,4 @@ private:
 	int CurDiff;
 	bool m_bGameData;
 };
-//#endif
+#endif

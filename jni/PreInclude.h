@@ -1,3 +1,6 @@
+#ifndef _PreInclude__h
+#define _PreInclude__h
+
 #include <wchar.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -65,4 +68,4 @@ inline int mul_div(int number, int numerator, int denominator)
 //#else
 //#define NULL    ((void *)0)
 //#endif
-//#endif
+#endif

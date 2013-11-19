@@ -1,13 +1,4 @@
-//  ffdefs.h
-//
-//  Revisions:
-//
-//	11-20-03: Original - HES
-//
-
-
-
-#if !defined ( __FFdefs_h__ )
+#ifndef __FFdefs_h__
 #define __FFdefs_h__
 
 

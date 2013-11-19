@@ -8,8 +8,7 @@
 ** 2002/06/27:fle:Original
 **
 */
-#if !defined ( __Average_h__ )
-
+#ifndef __Average_h__
 #define __Average_h__
 
 /**
@@ -43,8 +42,4 @@ public:
 
 };
 
-#endif   /* if !defined ( __Average_h__ ) */
-
-
-
-
+#endif

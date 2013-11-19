@@ -1,6 +1,5 @@
 
-#if !defined ( __firFilter_h__ )
-
+#ifndef __firFilter_h__
 #define __firFilter_h__
 
 

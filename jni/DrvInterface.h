@@ -1,5 +1,4 @@
-#if !defined ( __DrvInterface_h__ )
-
+#ifndef __DrvInterface_h__
 #define __DrvInterface_h__
 
 #include "array.h"

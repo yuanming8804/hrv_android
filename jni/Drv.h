@@ -6,7 +6,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef __Drv_h__
+#define __Drv_h__
 
 #include "DrvBPM.h"
 
@@ -40,3 +41,5 @@ protected:
 	BOOL m_fIsOpened;
 	BOOL m_fIsStarted;
 };
+
+#endif

@@ -8,17 +8,8 @@
 ** 2002/06/26:fle:Original
 **
 */
-
-
-#if !defined ( __Queue_h__ )
-
+#ifndef __Queue_h__
 #define __Queue_h__
-
-
-/**
-** Required include files.
-*/
-
 
 /**
 ** ¶ÓÁÐÔªËØ

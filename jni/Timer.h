@@ -16,7 +16,7 @@ private:
     }
     void thread_proc();
     virtual void *OnTimer();
-    void thread_exit_handler();
+
 public:
     CTimer();
     CTimer(long second, long microsecond);
@@ -26,6 +26,10 @@ public:
     void StartTimer();
     void StopTimer();
     void *(*start_routine)(void *);
+//    void thread_exit_handler(int sig)
+//    {
+//    	pthread_exit(0);
+//    }
 };
 
 #endif /* CTIMER_H_ */

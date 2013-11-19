@@ -1,4 +1,3 @@
-
 //////////////////////////////////////////////////////////////////////
 //
 //                U  S  B
@@ -11,7 +10,6 @@
 //                U  S  B
 //
 //////////////////////////////////////////////////////////////////////
-
 #include "PreInclude.h"
 #include <time.h>
 //#include "ff.h"
@@ -84,8 +82,10 @@ static float fIbiMultiplier = defIbiMultiplier;
 
 CDrvM801::CDrvM801()
 {
-	m_hCond = PTHREAD_COND_INITIALIZER;			// 线程退出条件
-	m_hLock = PTHREAD_MUTEX_INITIALIZER;
+	//m_hCond = PTHREAD_COND_INITIALIZER;			// 线程退出条件
+	//m_hLock = PTHREAD_MUTEX_INITIALIZER;
+	pthread_cond_init(&m_hCond, NULL);
+	pthread_mutex_init(&m_hLock, NULL);
 
 	m_fIsOpened = false;
 	//m_hSensor = INVALID_HANDLE_VALUE;
@@ -95,7 +95,7 @@ CDrvM801::CDrvM801()
 		InputReport[ i ] = 0;                          // fle::debug
 	}                                                  // fle::debug
 
-	m_hThread = NULL;
+	m_hThread = 0;
 
 	m_Channels[0].pInternBuffer = new WORD[PPG_BUFFER_SIZE];
 	m_Channels[0].nSizeOfIntBuf = PPG_BUFFER_SIZE;

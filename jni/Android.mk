@@ -3,7 +3,7 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
 #LOCAL_C_INCLUDES := $(LOCAL_PATH) 
-LOCAL_C_INCLUDES := D:\AndroidEclipse\android-ndk-r9\sources\cxx-stl\stlport\stlport
+#LOCAL_C_INCLUDES := D:\AndroidEclipse\android-ndk-r9\sources\cxx-stl\stlport\stlport
 
 #APP_STL := stlport_static
 #APP_STL := gnustl_static #GNU STL

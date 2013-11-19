@@ -110,7 +110,7 @@ TYPE& CContrObArray<TYPE, ARG_TYPE>::operator[](int nIndex)
 	}
 	else
 	{
-		OutErr("operator[]!");
+		//OutErr("operator[]!");
 		return typeDef;
 	}
 }
@@ -139,7 +139,7 @@ void CContrObArray<TYPE, ARG_TYPE>::RemoveAt(int Ind, int Count)
 	}
 	else
 	{
-		OutErr("Remove!");
+		//OutErr("Remove!");
 	}
 }
 
@@ -158,7 +158,7 @@ void CContrObArray<TYPE, ARG_TYPE>::Set(int Ind, ARG_TYPE Obj)
 	}
 	else
 	{
-		OutErr("Set!");
+		//OutErr("Set!");
 	}
 }
 
@@ -171,9 +171,9 @@ TYPE CContrObArray<TYPE, ARG_TYPE>::Get(int Ind)
 	}
 	else
 	{
-		OutErr("Get!");
+		//OutErr("Get!");
 		if (Array.size()) return Array[0];
-		return NULL;
+		return (TYPE)0;
 	}
 }
 

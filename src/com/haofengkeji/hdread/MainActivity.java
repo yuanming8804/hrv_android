@@ -17,6 +17,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity 
@@ -25,6 +29,9 @@ public class MainActivity extends Activity
 	private UsbDevice usbDevice;
 	private static final String ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION";
 	private PendingIntent pendingIntent;
+	
+	private static final String READ_DEVICE_BYTE_NAME = "read_device_data";
+	TextView textView;
 	
 	private Handler handler = new Handler()
 	{
@@ -35,11 +42,28 @@ public class MainActivity extends Activity
 			super.handleMessage(msg);
 			switch (msg.what) 
 			{
-			case 3:
+			case 3:		// 有权访问设备
 				Toast.makeText(MainActivity.this, "33333333333333333", 0).show();
 				break;
-			case 4:
+			case 4:		// 无权限访问设备
 				Toast.makeText(MainActivity.this, "44444444444444444", 0).show();
+				break;
+			case 0x1233:	// 显示读取到的消息
+				Bundle bundle = msg.getData();
+				byte[] byteDeviceData = bundle.getByteArray(READ_DEVICE_BYTE_NAME);
+				
+				
+				//textView.setText(byteDeviceData.toString());
+				String str = "";
+				for (Byte byte1 : byteDeviceData)
+				{
+					//System.err.println(byte1);
+					//Toast.makeText(MainActivity.this, byte1.toString(), 0).show();
+					str += byte1.toString();
+					str += ", ";
+				}
+				textView.setText(null);
+				textView.setText(str);
 				break;
 			}
 		}
@@ -51,9 +75,23 @@ public class MainActivity extends Activity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
+		textView = (TextView)findViewById(R.id.textView1);
+		//Start();		
+		usbManager = (UsbManager)getSystemService(Context.USB_SERVICE);
+		
 		pendingIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
 		IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
 		registerReceiver(mUsbReceiver, filter);
+		
+		Button btnConnect = (Button)findViewById(R.id.btnConnect);
+		btnConnect.setOnClickListener(new OnClickListener()
+		{
+			@Override
+			public void onClick(View arg0)
+			{
+				new MyThread2().start();
+			}
+		});
 	}
 	
 	static {
@@ -78,9 +116,11 @@ public class MainActivity extends Activity
 				//遍历集合取指定的USB设备
 				for (UsbDevice device : map.values())
 				{
-					Log.e("device", "vid:"+device.getVendorId()+"   pid:"+device.getProductId()+"   "+device.getDeviceName());
+					Log.e("device", "vid:" + device.getVendorId() + 
+							"   pid:" + device.getProductId() + 
+							"   " + device.getDeviceName());
 					//VendorID 和 ProductID  十进制
-					if (1 == device.getVendorId() && 4292 == device.getProductId())
+					if (4292 == device.getVendorId() && 1 == device.getProductId())
 					{
 						usbDevice = device;
 					}
@@ -138,16 +178,35 @@ public class MainActivity extends Activity
 			connection.claimInterface(usbInterface, true);
 			
 			//发送数据
-			byte[] byte2 = new byte[64];
 			int out = connection.bulkTransfer(outEndpoint, cmd, cmd.length, 3000);
 			
-			//读取数据1   两种方法读取数据
-			int ret = connection.bulkTransfer(inEndpoint, byte2, byte2.length, 3000);
-			Log.e("ret", "ret:"+ret);
-			for (Byte byte1 : byte2)
+			
+			while (true)
 			{
-				System.err.println(byte1);
+				//读取数据1   两种方法读取数据
+				byte[] byte2 = new byte[16];
+				int ret = connection.bulkTransfer(inEndpoint, byte2, byte2.length, 0);
+				
+				Bundle bundle = new Bundle();
+				bundle.putByteArray(READ_DEVICE_BYTE_NAME, byte2);
+				Message msg = new Message();
+				msg.setData(bundle);
+				msg.what = 0x1233;
+				handler.sendMessage(msg);
+				//Log.e("ret", "ret:" + ret);
+				//for (Byte byte1 : byte2)
+				//{
+					//System.err.println(byte1);
+				//}
 			}
+//			//读取数据1   两种方法读取数据
+//			byte[] byte2 = new byte[16];
+//			int ret = connection.bulkTransfer(inEndpoint, byte2, byte2.length, 3000);
+//			Log.e("ret", "ret:" + ret);
+//			for (Byte byte1 : byte2)
+//			{
+//				System.err.println(byte1);
+//			}
 			
 			//读取数据2
 			/*int outMax = outEndpoint.getMaxPacketSize();

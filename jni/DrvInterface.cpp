@@ -1285,3 +1285,9 @@ BOOL Fun_interface::ReadData()
 
 	return TRUE;
 }
+
+
+void Fun_interface::SetInputReport(jbyteArray byteArray)
+{
+	pDrv->SetInputReport(byteArray);
+}

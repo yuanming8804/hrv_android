@@ -204,6 +204,10 @@ public:
 	int GetIBI();
 	int GetDataAvailable();
 
+	//-----------------------------------------------------------
+	void SetInputReport(jbyteArray byteArray);
+	//-----------------------------------------------------------
+
 	//friend VOID TimerAction(PVOID lpParam, BOOLEAN TimerOrWaitFired);
 	friend void *TimerAction(void *arg);
 };

@@ -11,6 +11,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 #include "PreInclude.h"
+#include <jni.h>
 #include <time.h>
 //#include "ff.h"
 #include "DrvM801Usb.h"
@@ -25,6 +26,7 @@
 #include <pthread.h>
 #include <errno.h>
 
+
 //#include "..\LogFile.h"
 
 //#include "resource.h"
@@ -34,7 +36,8 @@
 
 //#include "..\ff.h"
 
-
+extern JNIEnv* m_pEnv;
+extern jobject m_jObj;
 /**
 ** Defines for strings to read from or write to the registry.
 **
@@ -248,7 +251,37 @@ BOOL CDrvM801::CloseSensor()
 */
 BOOL CDrvM801::OpenSensor()
 {
-	bool MyDeviceDetected = FALSE;
+	if ( m_fIsOpened )
+		return FALSE;
+
+	BOOL MyDeviceDetected = FALSE;
+
+	jclass clazz = m_pEnv->FindClass("com/haofengkeji/hdread/MainActivity");
+	jmethodID mid = m_pEnv->GetMethodID(clazz, "startDevice", "()V");
+	if (mid == NULL) {
+		MyDeviceDetected = FALSE;
+	} else {
+		m_pEnv->CallVoidMethod(m_jObj, mid);
+		MyDeviceDetected = TRUE;
+	}
+
+//	jbyte instanceMethodResult;
+//	instanceMethodResult = static_cast<jbyte>(m_pEnv->CallObjectMethod(m_jObj, mid));
+
+	this->mbDeviceDetected = MyDeviceDetected;
+
+	if (MyDeviceDetected == FALSE)
+	{
+		// allow FF to continue w/o error to
+		// user if USB sensor is not present
+		m_fIsOpened = FALSE;
+		//this->m_hSensor = INVALID_HANDLE_VALUE;
+	}
+	else
+	{
+		m_fIsOpened = TRUE;
+		//this->m_hSensor = hSensor;
+	}
 
 	return MyDeviceDetected;
 }
@@ -712,6 +745,13 @@ void CDrvM801::extractDataFromReport( DWORD NumberOfBytesRead )
 	}
 }
 
+void CDrvM801::SetInputReport(jbyteArray byteArray)
+{
+	jbyte* a = m_pEnv->GetByteArrayElements(byteArray, NULL);
+	//int textLength = strlen((const char*)a);
+	//this->InputReport = malloc(textLength + 1);
+	memcpy(this->InputReport, a, 16);
+}
 
 /**
 **	¶ÁÈ¡Êý¾Ý

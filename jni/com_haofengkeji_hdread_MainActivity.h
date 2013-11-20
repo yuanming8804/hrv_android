@@ -71,6 +71,14 @@ JNIEXPORT jboolean JNICALL Java_com_haofengkeji_hdread_MainActivity_Start
 JNIEXPORT void JNICALL Java_com_haofengkeji_hdread_MainActivity_Stop
   (JNIEnv *, jobject);
 
+/*
+ * Class:     com_haofengkeji_hdread_MainActivity
+ * Method:    SetInputReport
+ * Signature: ([B)V
+ */
+JNIEXPORT void JNICALL Java_com_haofengkeji_hdread_MainActivity_SetInputReport
+  (JNIEnv *, jobject, jbyteArray);
+
 #ifdef __cplusplus
 }
 #endif

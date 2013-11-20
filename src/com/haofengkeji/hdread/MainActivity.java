@@ -89,7 +89,8 @@ public class MainActivity extends Activity
 			@Override
 			public void onClick(View arg0)
 			{
-				new MyThread2().start();
+				//new MyThread2().start();
+				Start();
 			}
 		});
 	}
@@ -100,7 +101,25 @@ public class MainActivity extends Activity
 	
 	public native boolean Start();		// 启动设备
 	public native void Stop();			// 停止设备
+	// 设置本地库读取到的数据
+	public native void SetInputReport(byte[] inputReport);
 	
+	
+	// 开启打开设备的线程
+	public void startDevice()
+	{
+		new MyThread2().start();
+	}
+	
+	// 开启读写数据的线程
+	public void startDataCommunication()
+	{
+		new MyThread3().start();
+	}
+	
+	// 停止数据传输
+	
+
 	// 连接设备
 	class MyThread2 extends Thread
 	{
@@ -130,7 +149,8 @@ public class MainActivity extends Activity
 				if (usbManager.hasPermission(usbDevice))
 				{
 					handler.sendEmptyMessage(3);
-					new MyThread3().start();
+					//new MyThread3().start();
+					//startDataCommunication();
 				}
 				else
 				{
@@ -148,6 +168,8 @@ public class MainActivity extends Activity
 			}
 		}
 	}
+	
+	UsbDeviceConnection connection = null;
 	
 	// 读写数据
 	class MyThread3 extends Thread
@@ -174,17 +196,20 @@ public class MainActivity extends Activity
 			//USBEndpoint为读写数据所需的节点
 			UsbEndpoint inEndpoint = usbInterface.getEndpoint(0);  //读数据节点
 			UsbEndpoint outEndpoint = usbInterface.getEndpoint(1); //写数据节点
-			UsbDeviceConnection connection = usbManager.openDevice(usbDevice);
+			connection = usbManager.openDevice(usbDevice);
 			connection.claimInterface(usbInterface, true);
 			
 			//发送数据
 			int out = connection.bulkTransfer(outEndpoint, cmd, cmd.length, 3000);
 			
-			
 			while (true)
 			{
 				//读取数据1   两种方法读取数据
 				byte[] byte2 = new byte[16];
+				for (Byte byte1 : byte2)
+				{
+					byte1 = 0;
+				}
 				int ret = connection.bulkTransfer(inEndpoint, byte2, byte2.length, 0);
 				
 				Bundle bundle = new Bundle();
@@ -193,6 +218,8 @@ public class MainActivity extends Activity
 				msg.setData(bundle);
 				msg.what = 0x1233;
 				handler.sendMessage(msg);
+				
+				SetInputReport(byte2);
 				//Log.e("ret", "ret:" + ret);
 				//for (Byte byte1 : byte2)
 				//{

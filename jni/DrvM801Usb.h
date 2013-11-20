@@ -11,9 +11,6 @@
 #define __DrvM801Usb_h__
 
 #include "Drv.h"
-
-
-
 /**
 ** Report sizes
 **
@@ -94,9 +91,12 @@ public:
 	CDrvM801();
 	virtual ~CDrvM801();
 
+	//-----------------------------------------------------------
+	void SetInputReport(jbyteArray byteArray);
+	//-----------------------------------------------------------
 private:
 	//HANDLE   m_hThread;
-	HANDLE   m_hSensor;													// 传感器
+	HANDLE   m_hSensor;												// 传感器
 
 	pthread_t m_hThread;
 	pthread_cond_t m_hCond;// = PTHREAD_COND_INITIALIZER;			// 线程退出条件

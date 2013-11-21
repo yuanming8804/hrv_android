@@ -114,7 +114,30 @@ public class MainActivity extends Activity
 	// 开启读写数据的线程
 	public void startDataCommunication()
 	{
-		new MyThread3().start();
+		//new MyThread3().start();
+		usbInterface = usbDevice.getInterface(0);
+		// USBEndpoint为读写数据所需的节点
+		inEndpoint = usbInterface.getEndpoint(0);  // 读数据节点
+		outEndpoint = usbInterface.getEndpoint(1); // 写数据节点
+		connection = usbManager.openDevice(usbDevice);
+		connection.claimInterface(usbInterface, true);
+	}
+	
+	// 读取数据
+	public byte[] readData()
+	{
+		int length = 16;
+		byte[] bReadData = new byte[length];
+		int ret = connection.bulkTransfer(inEndpoint, bReadData, length, 0);
+
+		Bundle bundle = new Bundle();
+		bundle.putByteArray(READ_DEVICE_BYTE_NAME, bReadData);
+		Message msg = new Message();
+		msg.setData(bundle);
+		msg.what = 0x1233;
+		handler.sendMessage(msg);
+		
+		return bReadData;
 	}
 	
 	// 停止数据传输
@@ -130,22 +153,22 @@ public class MainActivity extends Activity
 			super.run();
 			try 
 			{
-				//取连接到设备上的USB设备集合
+				// 取连接到设备上的USB设备集合
 				HashMap<String, UsbDevice> map = usbManager.getDeviceList();
-				//遍历集合取指定的USB设备
+				// 遍历集合取指定的USB设备
 				for (UsbDevice device : map.values())
 				{
 					Log.e("device", "vid:" + device.getVendorId() + 
 							"   pid:" + device.getProductId() + 
 							"   " + device.getDeviceName());
-					//VendorID 和 ProductID  十进制
+					// VendorID 和 ProductID 十进制
 					if (4292 == device.getVendorId() && 1 == device.getProductId())
 					{
 						usbDevice = device;
 					}
 				}
 				
-				//程序是否有操作设备的权限
+				// 程序是否有操作设备的权限
 				if (usbManager.hasPermission(usbDevice))
 				{
 					handler.sendEmptyMessage(3);
@@ -154,10 +177,10 @@ public class MainActivity extends Activity
 				}
 				else
 				{
-					//没有权限询问用户是否授予权限
+					// 没有权限询问用户是否授予权限
 					handler.sendEmptyMessage(4);
-					usbManager.requestPermission(usbDevice, pendingIntent); //该代码执行后，系统弹出一个对话框，
-					                                                        //询问用户是否授予程序操作USB设备的权限
+					// 弹出对话框，询问用户是否授予程序操作USB设备的权限
+					usbManager.requestPermission(usbDevice, pendingIntent); 
 				}
 				
 			} 
@@ -169,7 +192,10 @@ public class MainActivity extends Activity
 		}
 	}
 	
-	UsbDeviceConnection connection = null;
+	UsbDeviceConnection connection = null;	// USB连接
+	UsbInterface usbInterface = null;		// USB连接接口
+	UsbEndpoint inEndpoint;					// 读数据节点
+	UsbEndpoint outEndpoint;				// 写数据节点
 	
 	// 读写数据
 	class MyThread3 extends Thread
@@ -190,21 +216,21 @@ public class MainActivity extends Activity
 			cmd[6] = 0x07;
 			cmd[7] = 0x08;
 			cmd[8] = 0x09;
-			cmd[9] = 0x20;				
+			cmd[9] = 0x20;
 			
-			UsbInterface usbInterface = usbDevice.getInterface(0);
-			//USBEndpoint为读写数据所需的节点
-			UsbEndpoint inEndpoint = usbInterface.getEndpoint(0);  //读数据节点
-			UsbEndpoint outEndpoint = usbInterface.getEndpoint(1); //写数据节点
+			usbInterface = usbDevice.getInterface(0);
+			// USBEndpoint为读写数据所需的节点
+			inEndpoint = usbInterface.getEndpoint(0);  // 读数据节点
+			outEndpoint = usbInterface.getEndpoint(1); // 写数据节点
 			connection = usbManager.openDevice(usbDevice);
 			connection.claimInterface(usbInterface, true);
 			
-			//发送数据
+			// 发送数据
 			int out = connection.bulkTransfer(outEndpoint, cmd, cmd.length, 3000);
 			
 			while (true)
 			{
-				//读取数据1   两种方法读取数据
+				// 读取数据1   两种方法读取数据
 				byte[] byte2 = new byte[16];
 				for (Byte byte1 : byte2)
 				{
@@ -219,14 +245,14 @@ public class MainActivity extends Activity
 				msg.what = 0x1233;
 				handler.sendMessage(msg);
 				
-				SetInputReport(byte2);
+				//SetInputReport(byte2);
 				//Log.e("ret", "ret:" + ret);
 				//for (Byte byte1 : byte2)
 				//{
 					//System.err.println(byte1);
 				//}
 			}
-//			//读取数据1   两种方法读取数据
+//			// 读取数据1   两种方法读取数据
 //			byte[] byte2 = new byte[16];
 //			int ret = connection.bulkTransfer(inEndpoint, byte2, byte2.length, 3000);
 //			Log.e("ret", "ret:" + ret);
@@ -235,7 +261,7 @@ public class MainActivity extends Activity
 //				System.err.println(byte1);
 //			}
 			
-			//读取数据2
+			// 读取数据2
 			/*int outMax = outEndpoint.getMaxPacketSize();
 			int inMax = inEndpoint.getMaxPacketSize();
 			ByteBuffer byteBuffer = ByteBuffer.allocate(inMax);

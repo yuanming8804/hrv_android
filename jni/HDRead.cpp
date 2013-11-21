@@ -6,6 +6,7 @@
 
 JNIEnv* m_pEnv = NULL;		// NDK对象
 jobject m_jObj;				// 应用程序实例
+jclass m_jClazz;			// 获取的java类
 
 JNIEXPORT jboolean JNICALL Java_com_haofengkeji_hdread_MainActivity_Start
   (JNIEnv * env, jobject obj)
@@ -14,6 +15,7 @@ JNIEXPORT jboolean JNICALL Java_com_haofengkeji_hdread_MainActivity_Start
 
 	m_pEnv = env;
 	m_jObj = obj;
+	env->FindClass("com/haofengkeji/hdread/MainActivity");
 
 //	jclass clazz = env->FindClass("com/haofengkeji/hdread/MainActivity");
 //	jmethodID mid = env->GetMethodID(clazz, "startDevice", "()V");

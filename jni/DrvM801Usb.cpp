@@ -38,6 +38,8 @@
 
 extern JNIEnv* m_pEnv;
 extern jobject m_jObj;
+extern jclass m_jClazz;
+
 /**
 ** Defines for strings to read from or write to the registry.
 **
@@ -90,7 +92,7 @@ CDrvM801::CDrvM801()
 	pthread_cond_init(&m_hCond, NULL);
 	pthread_mutex_init(&m_hLock, NULL);
 
-	m_fIsOpened = false;
+	m_fIsOpened = FALSE;
 	//m_hSensor = INVALID_HANDLE_VALUE;
 
 	for ( int i = 0; i < sizeof( InputReport ); i++ )  // fle::debug
@@ -256,17 +258,14 @@ BOOL CDrvM801::OpenSensor()
 
 	BOOL MyDeviceDetected = FALSE;
 
-	jclass clazz = m_pEnv->FindClass("com/haofengkeji/hdread/MainActivity");
-	jmethodID mid = m_pEnv->GetMethodID(clazz, "startDevice", "()V");
+	//jclass clazz = m_pEnv->FindClass("com/haofengkeji/hdread/MainActivity");
+	jmethodID mid = m_pEnv->GetMethodID(m_jClazz, "startDevice", "()V");
 	if (mid == NULL) {
 		MyDeviceDetected = FALSE;
 	} else {
 		m_pEnv->CallVoidMethod(m_jObj, mid);
 		MyDeviceDetected = TRUE;
 	}
-
-//	jbyte instanceMethodResult;
-//	instanceMethodResult = static_cast<jbyte>(m_pEnv->CallObjectMethod(m_jObj, mid));
 
 	this->mbDeviceDetected = MyDeviceDetected;
 
@@ -747,10 +746,10 @@ void CDrvM801::extractDataFromReport( DWORD NumberOfBytesRead )
 
 void CDrvM801::SetInputReport(jbyteArray byteArray)
 {
-	jbyte* a = m_pEnv->GetByteArrayElements(byteArray, NULL);
+	//jbyte* a = m_pEnv->GetByteArrayElements(byteArray, NULL);
 	//int textLength = strlen((const char*)a);
 	//this->InputReport = malloc(textLength + 1);
-	memcpy(this->InputReport, a, 16);
+	//memcpy(this->InputReport, a, 16);
 }
 
 /**
@@ -758,40 +757,32 @@ void CDrvM801::SetInputReport(jbyteArray byteArray)
 */
 int CDrvM801::ReadReport( DWORD * pNumberOfBytesRead )
 {
-	DWORD Result;
+	// 检查传感器是否打开
+	if (this->m_fIsOpened == FALSE)
+	{
+		this->OpenSensor( );
+		if (this->m_fIsOpened == FALSE)
+		{
+			return 0;
+		}
+	}
 
-	//检查传感器是否打开
-//	if ( this->m_hSensor == INVALID_HANDLE_VALUE )
-//	{
-//		this->OpenSensor( );
-//		if ( this->m_hSensor == INVALID_HANDLE_VALUE )
-//		{
-//			return 0;
-//		}
-//	}
-//
-//	//Read a report from the device.
-//	Result = ReadFile(  this->m_hSensor,			//传感器
-//						this->InputReport,			//接收数据缓冲区
-//						16,							//要读取的字节数
-////		                Capabilities.InputReportByteLength,
-//						pNumberOfBytesRead,			//接收读取的字节数
-//						NULL );
-//
-//   if ( Result == 0 )
-//   {
-//		CloseHandle( this->m_hSensor );
-//        this->m_fIsOpened = false;
-//        this->m_hSensor = INVALID_HANDLE_VALUE;
-//		this->mbDeviceDetected = FALSE;
-//   }
+	// Read a report from the device.
+	jmethodID mid = m_pEnv->GetMethodID(m_jClazz, "readData", "()V");
+	if (mid == NULL) {
+		this->m_fIsOpened = FALSE;
+		this->mbDeviceDetected = FALSE;
+		return 0;
+	} else {
+		jbyteArray byteArray = static_cast<jbyteArray>(m_pEnv->CallObjectMethod(m_jObj, mid));
+		jbyte* p_byte = m_pEnv->GetByteArrayElements(byteArray, NULL);
+		//int textLength = strlen((const char*)a);
+		//this->InputReport = malloc(textLength + 1);
+		memset(this->InputReport, 0, 16);
+		memcpy(this->InputReport, p_byte, 16);
+	}
 
-//    char a[16] = "aaaaaaa";
-//
-//    OutputDebugString(this->InputReport);
-//    OutputDebugString("\n");//LPCSTR
-
-	return Result;
+	return 1;
 }
 
 
@@ -850,8 +841,6 @@ int CDrvM801::WriteReport( int powerLevel )
 /////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////
-
-
 /**
 ** CDrvM801::reportMinMax
 **

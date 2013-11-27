@@ -92,7 +92,7 @@ public:
 	virtual ~CDrvM801();
 
 	//-----------------------------------------------------------
-	void SetInputReport(jbyteArray byteArray);
+	//void SetInputReport(jbyteArray byteArray);
 	//-----------------------------------------------------------
 private:
 	//HANDLE   m_hThread;

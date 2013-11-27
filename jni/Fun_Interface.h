@@ -205,7 +205,7 @@ public:
 	int GetDataAvailable();
 
 	//-----------------------------------------------------------
-	void SetInputReport(jbyteArray byteArray);
+	//void SetInputReport(jbyteArray byteArray);
 	//-----------------------------------------------------------
 
 	//friend VOID TimerAction(PVOID lpParam, BOOLEAN TimerOrWaitFired);

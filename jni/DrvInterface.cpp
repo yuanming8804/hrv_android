@@ -447,19 +447,21 @@ int Fun_interface::GetSamplesRead()
 }
 
 //开启设备
-BOOL Fun_interface::StartDevice()
-{
+BOOL Fun_interface::StartDevice() {
 	//if(!Initialize())
 	//	return FALSE;
 	//else
 	//	return pDrv->EnableDriver( NULL );
 
 	Initialize();
-	if (pDrv == NULL)
-		return FALSE;
-	else
-		return pDrv->EnableDriver(NULL);
 
+	if (pDrv == NULL) {
+		return FALSE;
+	} else {
+//		__android_log_write(ANDROID_LOG_INFO, "HRV_READ", "succeed in initializing CDrvM801* pDrv");
+//		return pDrv->EnableDriver(NULL);
+		return TRUE;
+	}
 }
 
 //停止设备
@@ -1287,7 +1289,7 @@ BOOL Fun_interface::ReadData()
 }
 
 
-void Fun_interface::SetInputReport(jbyteArray byteArray)
-{
-	pDrv->SetInputReport(byteArray);
-}
+//void Fun_interface::SetInputReport(jbyteArray byteArray)
+//{
+//	pDrv->SetInputReport(byteArray);
+//}

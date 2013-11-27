@@ -8,6 +8,7 @@
 #include <string.h>
 #include <pthread.h>
 #include <semaphore.h>
+#include <android/log.h>
 
 // 修正BCB6的tchar.h只有_TCHAR却没有TCHAR的问题.
 //#if defined(__BORLANDC__) && !defined(_TCHAR_DEFINED)

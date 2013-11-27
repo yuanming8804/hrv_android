@@ -36,9 +36,9 @@
 
 //#include "..\ff.h"
 
+extern JavaVM* gs_jvm;
+extern jobject gs_obj;
 extern JNIEnv* m_pEnv;
-extern jobject m_jObj;
-extern jclass m_jClazz;
 
 /**
 ** Defines for strings to read from or write to the registry.
@@ -95,9 +95,9 @@ CDrvM801::CDrvM801()
 	m_fIsOpened = FALSE;
 	//m_hSensor = INVALID_HANDLE_VALUE;
 
-	for ( int i = 0; i < sizeof( InputReport ); i++ )  // fle::debug
+	for (int i = 0; i < sizeof(InputReport); i++)      // fle::debug
 	{                                                  // fle::debug
-		InputReport[ i ] = 0;                          // fle::debug
+		InputReport[i] = 0;                            // fle::debug
 	}                                                  // fle::debug
 
 	m_hThread = 0;
@@ -116,7 +116,7 @@ CDrvM801::CDrvM801()
 	//m_Channels[1].hSemaphore = ::CreateSemaphore(NULL, 1, 1, NULL);
 	sem_init(&m_Channels[1].hSemaphore, 0, 1);
 
-	this->registryReadMulitpliers( );
+	this->registryReadMulitpliers();
 
 ////////Dont use registry//////////////////
 	int numAverageSensorSamples = defNumAverageSensorSamples;
@@ -146,12 +146,12 @@ CDrvM801::CDrvM801()
 #endif
 
 
-	this->agcRegistryRead( );
+	this->agcRegistryRead();
 
 	this->mbPowerIsSet = FALSE;
 	this->mAgcPowerLevelLast = -1;
 
-	if ( this->OpenSensor( ))
+	if (this->OpenSensor())
 	{
 		if ( this->mAgcOn == defAgcOn )
 		{                                // if agc is on, start @ medium
@@ -162,17 +162,17 @@ CDrvM801::CDrvM801()
 									   // the value from the registry
 			this->agcPowerLevelSet( this->mAgcPowerLevel, FALSE );
 		}
-		this->CloseSensor( );
+		this->CloseSensor();
 	}
 }
 
 
 CDrvM801::~CDrvM801()
 {
-	if ( this->OpenSensor( ) )
+	if ( this->OpenSensor() )
 	{
 		this->agcPowerLevelSet( defAgcPowerLevelMed, FALSE );
-		this->CloseSensor( );
+		this->CloseSensor();
 	}
 
 	for ( int i = 0; i < NUMBER_OF_CHANNELS; i++ )
@@ -215,6 +215,7 @@ BOOL CDrvM801::EnableDriver(LPCSTR pPortName)
 {
 	if (!OpenSensor())
 	{
+		__android_log_write(ANDROID_LOG_INFO, "HRV_READ", "fail to OpenSensor()");
 		return FALSE;
 	}
 	return TRUE;
@@ -258,14 +259,18 @@ BOOL CDrvM801::OpenSensor()
 
 	BOOL MyDeviceDetected = FALSE;
 
+//	JNIEnv *env;
+//	gs_jvm->AttachCurrentThread(&env, NULL);
 	//jclass clazz = m_pEnv->FindClass("com/haofengkeji/hdread/MainActivity");
-	jmethodID mid = m_pEnv->GetMethodID(m_jClazz, "startDevice", "()V");
+	jclass clazz = m_pEnv->GetObjectClass(gs_obj);
+	jmethodID mid = m_pEnv->GetMethodID(clazz, "startDevice", "()V");
 	if (mid == NULL) {
 		MyDeviceDetected = FALSE;
 	} else {
-		m_pEnv->CallVoidMethod(m_jObj, mid);
 		MyDeviceDetected = TRUE;
+		m_pEnv->CallVoidMethod(gs_obj, mid);
 	}
+	//gs_jvm->DetachCurrentThread();
 
 	this->mbDeviceDetected = MyDeviceDetected;
 
@@ -282,6 +287,7 @@ BOOL CDrvM801::OpenSensor()
 		//this->m_hSensor = hSensor;
 	}
 
+	//__android_log_print(ANDROID_LOG_INFO, "HRV_READ", "deviceDetected = %d", MyDeviceDetected);
 	return MyDeviceDetected;
 }
 
@@ -369,6 +375,8 @@ void *ReadingThreadM801F(void *arg)
 // 开始收集数据
 BOOL CDrvM801::StartDataCollection()
 {
+	//__android_log_write(ANDROID_LOG_INFO, "HRV_READ", "StartDataCollection");
+
 	if (m_fIsStarted)
 		return FALSE;
 
@@ -744,13 +752,13 @@ void CDrvM801::extractDataFromReport( DWORD NumberOfBytesRead )
 	}
 }
 
-void CDrvM801::SetInputReport(jbyteArray byteArray)
-{
+//void CDrvM801::SetInputReport(jbyteArray byteArray)
+//{
 	//jbyte* a = m_pEnv->GetByteArrayElements(byteArray, NULL);
 	//int textLength = strlen((const char*)a);
 	//this->InputReport = malloc(textLength + 1);
 	//memcpy(this->InputReport, a, 16);
-}
+//}
 
 /**
 **	读取数据
@@ -767,20 +775,48 @@ int CDrvM801::ReadReport( DWORD * pNumberOfBytesRead )
 		}
 	}
 
+	//jclass cls = m_pEnv->FindClass("com/haofengkeji/hdread/MainActivity");
 	// Read a report from the device.
-	jmethodID mid = m_pEnv->GetMethodID(m_jClazz, "readData", "()V");
+	JNIEnv *env;
+	gs_jvm->AttachCurrentThread(&env, NULL);
+	jclass clazz = env->GetObjectClass(gs_obj);
+	jmethodID mid = env->GetMethodID(clazz, "readData", "()[B");
+	//
 	if (mid == NULL) {
 		this->m_fIsOpened = FALSE;
 		this->mbDeviceDetected = FALSE;
 		return 0;
 	} else {
-		jbyteArray byteArray = static_cast<jbyteArray>(m_pEnv->CallObjectMethod(m_jObj, mid));
-		jbyte* p_byte = m_pEnv->GetByteArrayElements(byteArray, NULL);
+		//__android_log_write(ANDROID_LOG_INFO, "HRV_READ", "1111111111111111");
+		jbyteArray byteArray = static_cast<jbyteArray>(env->CallObjectMethod(gs_obj, mid));
+		//__android_log_print(ANDROID_LOG_INFO, "HRV_READ", "read data %s", byteArray);
+		jbyte* p_byte = env->GetByteArrayElements(byteArray, NULL);
+		//__android_log_write(ANDROID_LOG_INFO, "HRV_READ", "33333333333333333");
 		//int textLength = strlen((const char*)a);
 		//this->InputReport = malloc(textLength + 1);
 		memset(this->InputReport, 0, 16);
 		memcpy(this->InputReport, p_byte, 16);
+
+//		char* test = new char[50];
+//		int i;
+//		for (int i = 0; i < 16; i++)
+//		{
+//			if (i > 0) {
+//				sprintf(test, "%s", ":");
+//				test += 1;
+//			}
+//			sprintf(test, "%02x", this->InputReport[i]);
+//			test += 2;
+//		}
+
+
+	//	__android_log_print(ANDROID_LOG_INFO, "HRV_READ", "read data %02x", this->InputReport);
+
+		//delete [] test;
+
+		env->ReleaseByteArrayElements(byteArray, p_byte, 0);
 	}
+	gs_jvm->DetachCurrentThread();
 
 	return 1;
 }

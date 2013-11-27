@@ -20,9 +20,9 @@
 					<folderInfo id="com.android.toolchain.gcc.1097888374.766141916" name="/" resourcePath="">
 						<toolChain id="com.android.toolchain.gcc.1222058033" name="com.android.toolchain.gcc" superClass="com.android.toolchain.gcc">
 							<targetPlatform binaryParser="org.eclipse.cdt.core.ELF" id="com.android.targetPlatform.1713290319" isAbstract="false" superClass="com.android.targetPlatform"/>
-							<builder command="ndk-build" id="com.android.builder.1947894081" managedBuildOn="false" superClass="com.android.builder"/>
+							<builder arguments="" command="ndk-build" id="com.android.builder.1947894081" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Android Builder" superClass="com.android.builder"/>
 							<tool id="com.android.gcc.compiler.507775640" name="Android GCC Compiler" superClass="com.android.gcc.compiler">
-								<option id="com.android.gcc.option.includePath.2112174292" superClass="com.android.gcc.option.includePath" valueType="includePath"/>
+								<option id="com.android.gcc.option.includePath.2112174292" superClass="com.android.gcc.option.includePath"/>
 								<inputType id="com.android.gcc.inputType.1970461763" superClass="com.android.gcc.inputType"/>
 							</tool>
 						</toolChain>

@@ -29,6 +29,7 @@ public class MainActivity extends Activity
 	private UsbDevice usbDevice;
 	private static final String ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION";
 	private PendingIntent pendingIntent;
+	public static final Object signal = new Object();
 	
 	private static final String READ_DEVICE_BYTE_NAME = "read_device_data";
 	TextView textView;
@@ -47,6 +48,14 @@ public class MainActivity extends Activity
 				break;
 			case 4:		// 无权限访问设备
 				Toast.makeText(MainActivity.this, "44444444444444444", 0).show();
+				break;
+			case 5:
+				//synchronized(signal) {
+					int result = connection.bulkTransfer(inEndpoint, bReadData, dataLength, 0);
+				//	if (result != -1)
+				//		signal.notify();
+				//}
+				
 				break;
 			case 0x1233:	// 显示读取到的消息
 				Bundle bundle = msg.getData();
@@ -117,31 +126,50 @@ public class MainActivity extends Activity
 		//new MyThread3().start();
 		usbInterface = usbDevice.getInterface(0);
 		// USBEndpoint为读写数据所需的节点
-		inEndpoint = usbInterface.getEndpoint(0);  // 读数据节点
-		outEndpoint = usbInterface.getEndpoint(1); // 写数据节点
+		inEndpoint = usbInterface.getEndpoint(0);  		// 读数据节点
+		outEndpoint = usbInterface.getEndpoint(1); 		// 写数据节点
 		connection = usbManager.openDevice(usbDevice);
 		connection.claimInterface(usbInterface, true);
 	}
 	
+	int dataLength = 16;
+	byte[] bReadData = new byte[dataLength];	// 读取到的USB数据
 	// 读取数据
 	public byte[] readData()
 	{
-		int length = 16;
-		byte[] bReadData = new byte[length];
-		int ret = connection.bulkTransfer(inEndpoint, bReadData, length, 0);
+		//connection.bulkTransfer(inEndpoint, bReadData, dataLength, 0);
 
-		Bundle bundle = new Bundle();
-		bundle.putByteArray(READ_DEVICE_BYTE_NAME, bReadData);
-		Message msg = new Message();
-		msg.setData(bundle);
-		msg.what = 0x1233;
-		handler.sendMessage(msg);
+//		Bundle bundle = new Bundle();
+//		bundle.putByteArray(READ_DEVICE_BYTE_NAME, bReadData);
+//		Message msg = new Message();
+//		msg.setData(bundle);
+//		msg.what = 0x1233;
+//		handler.sendMessage(msg);
 		
-		return bReadData;
+		handler.sendEmptyMessage(5);	// 通知主线程读取USB数据
+		
+		byte[] bTempReadData = new byte[dataLength];
+//		synchronized(signal) {			// 同步锁，获取信号量
+//			try {
+//				signal.wait();			// 释放信号量
+				bTempReadData = bReadData.clone();
+//			}
+//			catch (InterruptedException e) {
+//				Log.d("ReadSignal", "timeout");
+//			}
+//		}
+		return bTempReadData;
 	}
 	
 	// 停止数据传输
-	
+	public void closeConnection()
+	{
+		connection.close();
+		connection = null;
+		usbInterface = null;		// USB连接接口
+		inEndpoint = null;			// 读数据节点
+		outEndpoint = null;			// 写数据节点
+	}
 
 	// 连接设备
 	class MyThread2 extends Thread
@@ -173,7 +201,7 @@ public class MainActivity extends Activity
 				{
 					handler.sendEmptyMessage(3);
 					//new MyThread3().start();
-					//startDataCommunication();
+					startDataCommunication();
 				}
 				else
 				{
@@ -192,10 +220,11 @@ public class MainActivity extends Activity
 		}
 	}
 	
+	
 	UsbDeviceConnection connection = null;	// USB连接
 	UsbInterface usbInterface = null;		// USB连接接口
-	UsbEndpoint inEndpoint;					// 读数据节点
-	UsbEndpoint outEndpoint;				// 写数据节点
+	UsbEndpoint inEndpoint = null;			// 读数据节点
+	UsbEndpoint outEndpoint = null;			// 写数据节点
 	
 	// 读写数据
 	class MyThread3 extends Thread
@@ -294,7 +323,7 @@ public class MainActivity extends Activity
 	                	handler.sendEmptyMessage(1);
 	                    if (usbDevice != null)
 	                    {
-	                    	new MyThread3().start();
+	                    	//new MyThread3().start();
 	                    }
 	                } 
 	                else 

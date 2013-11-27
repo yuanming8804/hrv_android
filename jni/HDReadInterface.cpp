@@ -248,7 +248,7 @@ void CHDRead::SetCallbacks(pNewScore ScoreFunction, pNewPPG PPGFunction, pNewIBI
 	Error = ErrFunction;
 }
 
-void CHDRead::SetInputReport(jbyteArray byteArray)
-{
-	Fun_interface::Instance()->SetInputReport(byteArray);
-}
+//void CHDRead::SetInputReport(jbyteArray byteArray)
+//{
+//	Fun_interface::Instance()->SetInputReport(byteArray);
+//}

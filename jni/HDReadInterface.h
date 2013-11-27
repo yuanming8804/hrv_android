@@ -85,7 +85,7 @@ public:
 	void SetCallbacks(pNewScore ScoreFunction, pNewPPG PPGFunction, pNewIBI IBIFunction, pError ErrFunction);
 
 	//-----------------------------------------------------------
-	void SetInputReport(jbyteArray byteArray);
+	//void SetInputReport(jbyteArray byteArray);
 	//-----------------------------------------------------------
 
 private:

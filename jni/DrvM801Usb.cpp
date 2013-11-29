@@ -262,15 +262,14 @@ BOOL CDrvM801::OpenSensor()
 //	JNIEnv *env;
 //	gs_jvm->AttachCurrentThread(&env, NULL);
 	//jclass clazz = m_pEnv->FindClass("com/haofengkeji/hdread/MainActivity");
+
 	jclass clazz = m_pEnv->GetObjectClass(gs_obj);
-	jmethodID mid = m_pEnv->GetMethodID(clazz, "startDevice", "()V");
-	if (mid == NULL) {
-		MyDeviceDetected = FALSE;
-	} else {
-		MyDeviceDetected = TRUE;
-		m_pEnv->CallVoidMethod(gs_obj, mid);
+	jmethodID mid = m_pEnv->GetMethodID(clazz, "openDevice", "()Z");
+	if (mid != NULL) {
+		jboolean isOpen = m_pEnv->CallBooleanMethod(gs_obj, mid);
+		if (isOpen)	MyDeviceDetected = TRUE;
+		//__android_log_print(ANDROID_LOG_INFO, "HRV_READ", "isOpen = %d", isOpen);
 	}
-	//gs_jvm->DetachCurrentThread();
 
 	this->mbDeviceDetected = MyDeviceDetected;
 
@@ -327,6 +326,7 @@ void thread_exit_handler(int sig)
 	pthread_exit(0);
 }
 
+JNIEnv* gs_env = NULL;
 /**
 ** 读取数据的线程
 */
@@ -346,6 +346,7 @@ void *ReadingThreadM801F(void *arg)
 
 		pDriver->mbPowerIsSet = TRUE;
 
+		gs_jvm->AttachCurrentThread(&gs_env, NULL);
 		pthread_mutex_lock( &pDriver->m_hLock );
 		while ( pDriver->m_fIsStarted )
 		{
@@ -365,6 +366,8 @@ void *ReadingThreadM801F(void *arg)
 		pthread_mutex_unlock( &pDriver->m_hLock );
 
 		pDriver->agcFinalize( );
+
+		gs_jvm->DetachCurrentThread();
 	}
 
 	pthread_cond_signal( &pDriver->m_hCond );
@@ -725,6 +728,7 @@ void CDrvM801::extractDataFromReport( DWORD NumberOfBytesRead )
 	maxIdx = NumberOfBytesRead >> 1;    // 2 bytes per value, rounded down:
 										//    ie, 9 >> 1 ==>> 4
 
+	//__android_log_print(ANDROID_LOG_INFO, "HRV_READ", "maxIdx = %d", maxIdx);
 	for ( idx = 0; idx < maxIdx; idx++ )
 	{
 									   // samples from sensor are in
@@ -777,46 +781,42 @@ int CDrvM801::ReadReport( DWORD * pNumberOfBytesRead )
 
 	//jclass cls = m_pEnv->FindClass("com/haofengkeji/hdread/MainActivity");
 	// Read a report from the device.
-	JNIEnv *env;
-	gs_jvm->AttachCurrentThread(&env, NULL);
-	jclass clazz = env->GetObjectClass(gs_obj);
-	jmethodID mid = env->GetMethodID(clazz, "readData", "()[B");
-	//
+//	JNIEnv *env;
+//	gs_jvm->AttachCurrentThread(&env, NULL);
+	jclass clazz = gs_env->GetObjectClass(gs_obj);
+	jmethodID mid = gs_env->GetMethodID(clazz, "readData", "()[B");
+
 	if (mid == NULL) {
 		this->m_fIsOpened = FALSE;
 		this->mbDeviceDetected = FALSE;
 		return 0;
 	} else {
-		//__android_log_write(ANDROID_LOG_INFO, "HRV_READ", "1111111111111111");
-		jbyteArray byteArray = static_cast<jbyteArray>(env->CallObjectMethod(gs_obj, mid));
-		//__android_log_print(ANDROID_LOG_INFO, "HRV_READ", "read data %s", byteArray);
-		jbyte* p_byte = env->GetByteArrayElements(byteArray, NULL);
-		//__android_log_write(ANDROID_LOG_INFO, "HRV_READ", "33333333333333333");
+		jbyteArray byteArray = static_cast<jbyteArray>(gs_env->CallObjectMethod(gs_obj, mid));
+		jbyte* p_byte = gs_env->GetByteArrayElements(byteArray, NULL);
 		//int textLength = strlen((const char*)a);
 		//this->InputReport = malloc(textLength + 1);
 		memset(this->InputReport, 0, 16);
 		memcpy(this->InputReport, p_byte, 16);
 
-//		char* test = new char[50];
-//		int i;
+		//DWORD length = sizeof(this->InputReport) / sizeof(this->InputReport[0]);
+		//*pNumberOfBytesRead = sizeof(this->InputReport) / sizeof(this->InputReport[0]);
+		*pNumberOfBytesRead = 9;
+
+//		int ints[16];
 //		for (int i = 0; i < 16; i++)
 //		{
-//			if (i > 0) {
-//				sprintf(test, "%s", ":");
-//				test += 1;
-//			}
-//			sprintf(test, "%02x", this->InputReport[i]);
-//			test += 2;
+//			ints[i] = InputReport[i];
+//			__android_log_print(ANDROID_LOG_INFO, "HRV_READ", "%d", ints[i]);
 //		}
+//		__android_log_print(ANDROID_LOG_INFO, "HRV_READ", "----------------------------------------------\n");
 
+		gs_env->ReleaseByteArrayElements(byteArray, p_byte, 0);
+		gs_env->DeleteLocalRef(byteArray);
 
-	//	__android_log_print(ANDROID_LOG_INFO, "HRV_READ", "read data %02x", this->InputReport);
-
-		//delete [] test;
-
-		env->ReleaseByteArrayElements(byteArray, p_byte, 0);
+		//__android_log_write(ANDROID_LOG_INFO, "HRV_READ", "8888888888888888");
 	}
-	gs_jvm->DetachCurrentThread();
+	//gs_jvm->DetachCurrentThread();
+	gs_env->DeleteLocalRef(clazz);
 
 	return 1;
 }

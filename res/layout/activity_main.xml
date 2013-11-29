@@ -22,4 +22,22 @@
         android:layout_below="@+id/textView1"
         android:text="连接" />
 
+    <Button
+        android:id="@+id/btnTest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/btnConnect"
+        android:layout_below="@+id/btnConnect"
+        android:layout_marginTop="17dp"
+        android:text="Button" />
+
+    <TextView
+        android:id="@+id/txtTest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/btnTest"
+        android:layout_alignBottom="@+id/btnTest"
+        android:layout_centerHorizontal="true"
+        android:text="test" />
+
 </RelativeLayout>

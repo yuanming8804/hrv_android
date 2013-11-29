@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <sys/select.h>
 #include <time.h>
-//#include <pthread.h>
+#include <android/log.h>
 #include <iostream>
 
 //#ifndef NULL
@@ -87,17 +87,18 @@ void CTimer::thread_proc()
 		int rc = sigaction(SIGUSR1, &actions, NULL);
 
         //OnTimer();
-        this->start_routine(this->m_parameter);
+        this->start_routine(this->m_parameter);		// ∫Ø ˝
         //pthread_testcancel();
         struct timeval tempval;
-        tempval.tv_sec = m_second;
-        tempval.tv_usec = m_microsecond;
+        tempval.tv_sec = m_second;				// √Î
+        tempval.tv_usec = m_microsecond;		// 1Œ¢√Î = 1000∫¡√Î
+        //__android_log_print(ANDROID_LOG_INFO, "HRV_READ", "m_microsecond = %d", m_microsecond);
         select(0, NULL, NULL, NULL, &tempval);
     }
 }
 
-void *CTimer::OnTimer()
-{
-    //cout << "Timer once..." << endl;
-	return (void *)0;
-}
+//void *CTimer::OnTimer()
+//{
+//    //cout << "Timer once..." << endl;
+//	return (void *)0;
+//}

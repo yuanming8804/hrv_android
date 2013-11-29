@@ -57,27 +57,83 @@ extern "C" {
 #define com_haofengkeji_hdread_MainActivity_DEFAULT_KEYS_SEARCH_GLOBAL 4L
 /*
  * Class:     com_haofengkeji_hdread_MainActivity
- * Method:    Start
+ * Method:    StartDevice
  * Signature: ()Z
  */
-JNIEXPORT jboolean JNICALL Java_com_haofengkeji_hdread_MainActivity_Start
+JNIEXPORT jboolean JNICALL Java_com_haofengkeji_hdread_MainActivity_StartDevice
   (JNIEnv *, jobject);
 
 /*
  * Class:     com_haofengkeji_hdread_MainActivity
- * Method:    Stop
+ * Method:    StopDevice
  * Signature: ()V
  */
-JNIEXPORT void JNICALL Java_com_haofengkeji_hdread_MainActivity_Stop
+JNIEXPORT void JNICALL Java_com_haofengkeji_hdread_MainActivity_StopDevice
   (JNIEnv *, jobject);
 
 /*
  * Class:     com_haofengkeji_hdread_MainActivity
- * Method:    SetInputReport
- * Signature: ([B)V
+ * Method:    SetDifficultLevel
+ * Signature: (I)V
  */
-JNIEXPORT void JNICALL Java_com_haofengkeji_hdread_MainActivity_SetInputReport
-  (JNIEnv *, jobject, jbyteArray);
+JNIEXPORT void JNICALL Java_com_haofengkeji_hdread_MainActivity_SetDifficultLevel
+  (JNIEnv *, jobject, jint);
+
+/*
+ * Class:     com_haofengkeji_hdread_MainActivity
+ * Method:    GetBlockFlag
+ * Signature: ()Z
+ */
+JNIEXPORT jboolean JNICALL Java_com_haofengkeji_hdread_MainActivity_GetBlockFlag
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     com_haofengkeji_hdread_MainActivity
+ * Method:    SetBlockFlag
+ * Signature: (Z)V
+ */
+JNIEXPORT void JNICALL Java_com_haofengkeji_hdread_MainActivity_SetBlockFlag
+  (JNIEnv *, jobject, jboolean);
+
+/*
+ * Class:     com_haofengkeji_hdread_MainActivity
+ * Method:    SetReadHRV
+ * Signature: (Z)V
+ */
+JNIEXPORT void JNICALL Java_com_haofengkeji_hdread_MainActivity_SetReadHRV
+  (JNIEnv *, jobject, jboolean);
+
+/*
+ * Class:     com_haofengkeji_hdread_MainActivity
+ * Method:    GetReadHRV
+ * Signature: ()Z
+ */
+JNIEXPORT jboolean JNICALL Java_com_haofengkeji_hdread_MainActivity_GetReadHRV
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     com_haofengkeji_hdread_MainActivity
+ * Method:    GetPackHrt
+ * Signature: ()[F
+ */
+JNIEXPORT jfloatArray JNICALL Java_com_haofengkeji_hdread_MainActivity_GetPackHrt
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     com_haofengkeji_hdread_MainActivity
+ * Method:    GetIBICount
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_com_haofengkeji_hdread_MainActivity_GetIBICount
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     com_haofengkeji_hdread_MainActivity
+ * Method:    GetArtifactStatus
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_com_haofengkeji_hdread_MainActivity_GetArtifactStatus
+  (JNIEnv *, jobject);
 
 #ifdef __cplusplus
 }

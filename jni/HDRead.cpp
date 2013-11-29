@@ -16,9 +16,10 @@ jint JNI_OnLoad (JavaVM* vm, void* reserved)
     return JNI_VERSION_1_6;
 }
 
-JNIEXPORT jboolean JNICALL Java_com_haofengkeji_hdread_MainActivity_Start
+JNIEXPORT jboolean JNICALL Java_com_haofengkeji_hdread_MainActivity_StartDevice
   (JNIEnv * env, jobject obj)
 {
+	//env->GetJavaVM(&gs_jvm);
 	jboolean isStartDevice = JNI_FALSE;
 
 	m_pEnv = env;
@@ -55,15 +56,63 @@ JNIEXPORT jboolean JNICALL Java_com_haofengkeji_hdread_MainActivity_Start
 	return isStartDevice;
 }
 
-JNIEXPORT void JNICALL Java_com_haofengkeji_hdread_MainActivity_Stop
+JNIEXPORT void JNICALL Java_com_haofengkeji_hdread_MainActivity_StopDevice
   (JNIEnv * env, jobject obj)
 {
 	//关闭硬件设备
 	CHDRead::Instance()->StopDevice_();
 }
 
-JNIEXPORT void JNICALL Java_com_haofengkeji_hdread_MainActivity_SetInputReport
-  (JNIEnv * env, jobject obj, jbyteArray byteArray)
+JNIEXPORT void JNICALL Java_com_haofengkeji_hdread_MainActivity_SetDifficultLevel
+  (JNIEnv * env, jobject obj, jint diff)
 {
-	//CHDRead::Instance()->SetInputReport(byteArray);
+	Fun_interface::Instance()->SetCurDiff(diff);
+}
+
+JNIEXPORT jboolean JNICALL Java_com_haofengkeji_hdread_MainActivity_GetBlockFlag
+  (JNIEnv * env, jobject obj)
+{
+	return (jboolean)Fun_interface::Instance()->GetBlockFlag();
+}
+
+JNIEXPORT void JNICALL Java_com_haofengkeji_hdread_MainActivity_SetBlockFlag
+  (JNIEnv * env, jobject obj, jboolean bBlockFlag)
+{
+	Fun_interface::Instance()->SetBlockFlag(bBlockFlag);
+}
+
+JNIEXPORT void JNICALL Java_com_haofengkeji_hdread_MainActivity_SetReadHRV
+  (JNIEnv * env, jobject obj, jboolean bRead)
+{
+	Fun_interface::Instance()->SetReadHRV(bRead);
+}
+
+JNIEXPORT jboolean JNICALL Java_com_haofengkeji_hdread_MainActivity_GetReadHRV
+  (JNIEnv * env, jobject obj)
+{
+	return (jboolean)Fun_interface::Instance()->GetReadHRV();
+}
+
+JNIEXPORT jint JNICALL Java_com_haofengkeji_hdread_MainActivity_GetIBICount
+  (JNIEnv * env, jobject obj)
+{
+	//__android_log_print(ANDROID_LOG_INFO, "HRV_READ", "IBI count %d", Fun_interface::Instance()->GetIBICount());
+	return Fun_interface::Instance()->GetIBICount();
+}
+
+JNIEXPORT jint JNICALL Java_com_haofengkeji_hdread_MainActivity_GetArtifactStatus
+  (JNIEnv * env, jobject obj)
+{
+	return Fun_interface::Instance()->GetArtifactStatus();
+}
+
+JNIEXPORT jfloatArray JNICALL Java_com_haofengkeji_hdread_MainActivity_GetPackHrt
+  (JNIEnv * env, jobject obj)
+{
+	float *HRV;
+	int size;
+	HRV = CHDRead::Instance()->GetPackHrt_(size);
+	jfloatArray jarr = env->NewFloatArray(size);
+	env->SetFloatArrayRegion(jarr, 0, size, HRV);
+	return jarr;
 }

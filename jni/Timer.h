@@ -15,7 +15,7 @@ private:
         (static_cast<CTimer*>(p))->thread_proc();
     }
     void thread_proc();
-    virtual void *OnTimer();
+    //virtual void *OnTimer();
 
 public:
     CTimer();

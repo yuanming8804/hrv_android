@@ -1215,6 +1215,7 @@ void *TimerAction(void *arg)
 	{
 		// arg points to the argument; in this case it is an int
 		int event = *((int *)arg);
+		//__android_log_print(ANDROID_LOG_INFO, "HRV_READ", "event = %d", event);
 		switch (event)
 		{
 			case ID_PPG_TIMER:	//pjf cmnt: 100(55) ms period
@@ -1224,6 +1225,7 @@ void *TimerAction(void *arg)
 			case ID_SYS_TIMER:	//pjf cmnt: 500 Ms period
 				int fIBI;
 				int i;
+				//__android_log_print(ANDROID_LOG_INFO, "HRV_READ", "TakeIBI = %d", Fun_interface::Instance()->TakeIBI(fIBI, i));
 				for ( i = 0; Fun_interface::Instance()->TakeIBI(fIBI, i); i++ )
 				{
 					Fun_interface::Instance()->StoreIBI(fIBI);
@@ -1250,10 +1252,12 @@ BOOL Fun_interface::ReadData()
 {
 	//CTimer ppgTimer(TimerAction, 1, 0, 100, &arg_ppg);
 	//CTimer sysTimer(TimerAction, 1, 0, 500, &arg_sys);
-	hTimerPPG = new CTimer(TimerAction, 1, 0, 100, &arg_ppg);
-	hTimerSYS = new CTimer(TimerAction, 1, 0, 500, &arg_sys);
+	hTimerPPG = new CTimer(TimerAction, 1000, 0, 100000, &arg_ppg);
+	hTimerSYS = new CTimer(TimerAction, 1000, 0, 500000, &arg_sys);
 	hTimerPPG->StartTimer();
 	hTimerSYS->StartTimer();
+
+	//__android_log_write(ANDROID_LOG_INFO, "HRV_READ", "ReadData");
 
 //	struct timeval tempval;
 //	tempval.tv_sec = 0;

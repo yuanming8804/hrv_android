@@ -10,6 +10,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.hardware.usb.UsbConstants;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbEndpoint;
@@ -231,8 +232,8 @@ public class MainActivity extends Activity
 							int len = hrv.length;
 							if (GetIBICount() >= 10)
 							{
-								for (int i = 0; i < len; i++)
-									Log.d("hrv", String.valueOf(hrv[i]));
+//								for (int i = 0; i < len; i++)
+//									Log.d("hrv", String.valueOf(hrv[i]));
 							}
 						}
 						
@@ -283,10 +284,25 @@ public class MainActivity extends Activity
 		
 		//handler.sendEmptyMessage(5);	// 通知主线程读取USB数据
 		
-		int dataLength = 16;
+		int dataLength = 8;
 		byte[] bTempReadData = new byte[dataLength];
 		
+		//int result = connection.controlTransfer(UsbConstants.USB_DIR_IN | UsbConstants.USB_ENDPOINT_XFER_INT, request, value, index, buffer, length, timeout)
 		int result = connection.bulkTransfer(inEndpoint, bTempReadData, dataLength, 0);
+		
+		//int aaa = inEndpoint.getType();
+//		for (int index = 0; index < bTempReadData.length; index++) 
+//		{
+//			int aa = bTempReadData[index];
+//			Log.i("myactivity", String.format("%d", aa));
+//		}
+//		Log.i("myactivity", "============================================");
+//		for (int i = bTempReadData.length - 1; i > 0; i--)
+//		{
+//			bTempReadData[i] = bTempReadData[i - 1];
+//			Log.i("myactivity", String.format("0x%20x", bTempReadData[i]));
+//		}
+//		bTempReadData[0] = 0;
 		if (result != -1) {
 			
 		}
@@ -347,6 +363,8 @@ public class MainActivity extends Activity
 					outEndpoint = usbInterface.getEndpoint(1); 		// 写数据节点
 					connection = usbManager.openDevice(usbDevice);
 					connection.claimInterface(usbInterface, true);
+					
+					//int count = usbInterface.getEndpointCount();
 					
 					isOpenDevice = true;
 					//condition = true;
@@ -484,6 +502,8 @@ public class MainActivity extends Activity
 	    					outEndpoint = usbInterface.getEndpoint(1); 		// 写数据节点
 	    					connection = usbManager.openDevice(usbDevice);
 	    					connection.claimInterface(usbInterface, true);
+	    					
+	    					int count = usbInterface.getEndpointCount();
 	    					
 	    					isOpenDevice = true;
 	    					//condition = true;

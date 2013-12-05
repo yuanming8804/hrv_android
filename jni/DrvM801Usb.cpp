@@ -215,7 +215,7 @@ BOOL CDrvM801::EnableDriver(LPCSTR pPortName)
 {
 	if (!OpenSensor())
 	{
-		__android_log_write(ANDROID_LOG_INFO, "HRV_READ", "fail to OpenSensor()");
+		//__android_log_write(ANDROID_LOG_INFO, "HRV_READ", "fail to OpenSensor()");
 		return FALSE;
 	}
 	return TRUE;
@@ -722,7 +722,8 @@ void CDrvM801::extractDataFromReport( DWORD NumberOfBytesRead )
 	uBeLeInts val;
 	TCHAR * pInputReport;
 
-	pInputReport = &InputReport[ 1 ];   // a full report is 9 bytes:
+	pInputReport = &InputReport[ 0 ];
+	//pInputReport = &InputReport[ 1 ];   // a full report is 9 bytes:
 									    //    0th byte is report number
 									    //    bytes 1 - 8 is data
 	maxIdx = NumberOfBytesRead >> 1;    // 2 bytes per value, rounded down:
@@ -735,6 +736,15 @@ void CDrvM801::extractDataFromReport( DWORD NumberOfBytesRead )
 									   // big endian format
 		val.le.leLo = *pInputReport++;
 		val.le.leHi = *pInputReport++;
+
+//		__android_log_print(ANDROID_LOG_INFO, "HRV_READ", "leLo = %c", val.le.leLo);
+//		__android_log_print(ANDROID_LOG_INFO, "HRV_READ", "leHi = %c", val.le.leHi);
+//
+//		int lo = val.le.leLo, hi = val.le.leHi;
+//		__android_log_print(ANDROID_LOG_INFO, "HRV_READ", "leLo = %d", lo);
+//		__android_log_print(ANDROID_LOG_INFO, "HRV_READ", "mInt = %d", val.mInt);
+//
+//		__android_log_write(ANDROID_LOG_INFO, "HRV_READ", "===================================================");
 
 		val.mInt = 1024 - val.mInt;      // grep:if need to invert signal
 									     // grep:see below, too
@@ -795,8 +805,8 @@ int CDrvM801::ReadReport( DWORD * pNumberOfBytesRead )
 		jbyte* p_byte = gs_env->GetByteArrayElements(byteArray, NULL);
 		//int textLength = strlen((const char*)a);
 		//this->InputReport = malloc(textLength + 1);
-		memset(this->InputReport, 0, 16);
-		memcpy(this->InputReport, p_byte, 16);
+		memset(this->InputReport, 0, defUsbHidReportSizeInput);
+		memcpy(this->InputReport, p_byte, defUsbHidReportSizeInput);
 
 		//DWORD length = sizeof(this->InputReport) / sizeof(this->InputReport[0]);
 		//*pNumberOfBytesRead = sizeof(this->InputReport) / sizeof(this->InputReport[0]);
@@ -806,7 +816,7 @@ int CDrvM801::ReadReport( DWORD * pNumberOfBytesRead )
 //		for (int i = 0; i < 16; i++)
 //		{
 //			ints[i] = InputReport[i];
-//			__android_log_print(ANDROID_LOG_INFO, "HRV_READ", "%d", ints[i]);
+//			__android_log_print(ANDROID_LOG_INFO, "HRV_READ", "read data = %d", ints[i]);
 //		}
 //		__android_log_print(ANDROID_LOG_INFO, "HRV_READ", "----------------------------------------------\n");
 
@@ -892,7 +902,8 @@ void CDrvM801::reportMinMax( DWORD   NumberOfBytesRead,		//读取到的数据字节数
 	TCHAR * pInputReport;
 
 	// a full report is 9 bytes: 0th byte is report number bytes 1 - 8 is data
-	pInputReport = &InputReport[ 1 ];
+	//pInputReport = &InputReport[ 1 ];
+	pInputReport = &InputReport[ 0 ];
 
 	// 2 bytes per value, rounded down: ie, 9 >> 1 ==>> 4
 	maxIdx = NumberOfBytesRead >> 1;

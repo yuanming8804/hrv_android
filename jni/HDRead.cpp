@@ -3,6 +3,9 @@
 #include <stdlib.h>
 #include <android/log.h>
 #include "HDReadInterface.h"
+//#include <linux/usbdevice_fs.h>
+//#include <sys/ioctl.h>
+//#include <linux/usb.h>
 
 JNIEnv* m_pEnv = NULL;		// NDK对象
 JavaVM* gs_jvm;  			// 全局Java虚拟机
@@ -11,6 +14,17 @@ jobject gs_obj;				// java对象
 
 jint JNI_OnLoad (JavaVM* vm, void* reserved)
 {
+
+//	char data[4] = {0x09, 0x90, 0x50, 0x50};
+//
+//	struct usbdevfs_bulktransfer bt;
+//	bt.ep = usb_endpoint;  /* endpoint (received from Java) */
+//	bt.len = 4;            /* length of data */
+//	bt.timeout = 100;      /* timeout in ms */
+//	bt.data = data;        /* the data */
+//
+//	int rtn = ioctl(fd, USBDEVFS_BULK, &bt);
+
     // Cache the JavaVM interface pointer
 	gs_jvm = vm;
     return JNI_VERSION_1_6;
@@ -112,6 +126,13 @@ JNIEXPORT jfloatArray JNICALL Java_com_haofengkeji_hdread_MainActivity_GetPackHr
 	float *HRV;
 	int size;
 	HRV = CHDRead::Instance()->GetPackHrt_(size);
+	for (int i = 0; i < size; i++)
+	{
+//		char chFloat[20];
+//		memset(chFloat,'\0', sizeof(chFloat));
+//		sprintf(chFloat, "%f, ", HRV[i]);
+		__android_log_print(ANDROID_LOG_INFO, "HRV_READ", "hrv = %f", HRV[i]);
+	}
 	jfloatArray jarr = env->NewFloatArray(size);
 	env->SetFloatArrayRegion(jarr, 0, size, HRV);
 	return jarr;

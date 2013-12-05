@@ -18,7 +18,7 @@
 ** for communicating with USB Human Interface Devices (HIDs).
 **
 */
-#define defUsbHidReportSizeInput     ( 10 +  6 )
+#define defUsbHidReportSizeInput     8//( 10 +  6 )
 #define defUsbHidReportSizeOutput    (  4 + 12 )
 
 

@@ -1225,9 +1225,9 @@ void *TimerAction(void *arg)
 			case ID_SYS_TIMER:	//pjf cmnt: 500 Ms period
 				int fIBI;
 				int i;
-				//__android_log_print(ANDROID_LOG_INFO, "HRV_READ", "TakeIBI = %d", Fun_interface::Instance()->TakeIBI(fIBI, i));
 				for ( i = 0; Fun_interface::Instance()->TakeIBI(fIBI, i); i++ )
 				{
+//					__android_log_print(ANDROID_LOG_INFO, "HRV_READ", "fIBI = %d", fIBI);
 					Fun_interface::Instance()->StoreIBI(fIBI);
 				}
 				Fun_interface::Instance()->CloseIBI();	// clears the faIBIArr array

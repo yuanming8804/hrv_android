@@ -373,7 +373,6 @@ public class MainActivity extends Activity
 					}
 					
 					handler.sendEmptyMessage(3);
-					//new MyThread3().start();
 				}
 				else
 				{
